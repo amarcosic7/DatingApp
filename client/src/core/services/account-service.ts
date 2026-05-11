@@ -8,7 +8,7 @@ import { tap } from 'rxjs';
 })
 export class AccountService {
   private http = inject(HttpClient);
-  curentUser = signal<User | null>(null);
+  currentUser = signal<User | null>(null);
 
   baseUrl = 'https://localhost:5001/api/';
 
@@ -34,12 +34,12 @@ export class AccountService {
 
   setCurrentUser(user : User){
     localStorage.setItem('user',JSON.stringify(user));
-    this.curentUser.set(user);
+    this.currentUser.set(user);
   }
 
   logout(){
     localStorage.removeItem('user');
-    this.curentUser.set(null);
+    this.currentUser.set(null);
   }
 
 
