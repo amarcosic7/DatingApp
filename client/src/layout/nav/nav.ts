@@ -21,7 +21,7 @@ export class Nav {
 
   login(){
     this.accountService.login(this.creds).subscribe({
-      next: result => {
+      next: () => {
       this.router.navigateByUrl('/members'),
       this.toast.success('Logged is successfully'),
       this.creds = {};
