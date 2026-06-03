@@ -1,8 +1,8 @@
-import { HttpClient, HttpHeaderResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Member } from '../../types/member';
-import { AccountService } from './account-service';
+
 
 
 @Injectable({
@@ -12,22 +12,13 @@ export class MemberService {
 
   private http = inject(HttpClient);
   private baseUrl = environment.apiUrl;
-  private accountServer = inject(AccountService);
 
   getMembers(){
-    return this.http.get<Member[]>(this.baseUrl + 'members', this.getHttpOptions());
+    return this.http.get<Member[]>(this.baseUrl + 'members');
   }
 
     getMember(id: string){
-      return this.http.get<Member>(this.baseUrl + 'member/' + id,this.getHttpOptions());
+      return this.http.get<Member>(this.baseUrl + 'member/' + id);
     }
 
-
-    private getHttpOptions(){
-      return{
-        headers: new HttpHeaders({
-          Authorization: 'Bearer ' + this.accountServer.currentUser()?.token
-        })
-      }
-    }
 }
