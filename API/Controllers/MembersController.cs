@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-   [Authorize]
+    [Authorize]
     public class MembersController(IMemberRepository memberRepository) : BaseApiController
     {
         [HttpGet]
@@ -16,29 +16,29 @@ namespace API.Controllers
         {
             return Ok(await memberRepository.GetMembersAsync());
         }
-        
+
         [HttpGet("{Id}")]
         public async Task<ActionResult<Member>> GetMember(string id)
         {
-            var member =await memberRepository.GetMemberByIdAsync(id);
+            var member = await memberRepository.GetMemberByIdAsync(id);
 
-            if(member == null) return NotFound();
+            if (member == null) return NotFound();
 
             return member;
         }
         [HttpGet("{id}/photos")]
-        public async Task<ActionResult<IReadOnlyList<Photo>>>GetMembersPhoto(string id)
+        public async Task<ActionResult<IReadOnlyList<Photo>>> GetMembersPhoto(string id)
         {
             return Ok(await memberRepository.GetPhotosForMemberAsync(id));
         }
 
         [HttpPut]
-        public async Task<ActionResult>UpdateMember(MemberUpdateDto memberUpdateDto)
+        public async Task<ActionResult> UpdateMember(MemberUpdateDto memberUpdateDto)
         {
             var memberId = User.GetMemberId();
 
             var member = await memberRepository.GetMemberForUpdate(memberId);
-            if(member == null) return BadRequest("Could not get member");
+            if (member == null) return BadRequest("Could not get member");
 
             member.DisplayName = memberUpdateDto.DisplayName ?? member.DisplayName;
             member.Description = memberUpdateDto.Description ?? member.Description;
@@ -49,7 +49,7 @@ namespace API.Controllers
 
             memberRepository.Update(member); //optional
 
-            if(await memberRepository.SaveAllAsync()) return NoContent();
+            if (await memberRepository.SaveAllAsync()) return NoContent();
 
             return BadRequest("Failed to update member");
         }
