@@ -13,7 +13,7 @@ export class MemberService {
 
   private http = inject(HttpClient);
   private baseUrl = environment.apiUrl;
-  editMode = signal(true);
+  editMode = signal(false);
   member = signal<Member | null>(null);
 
 
@@ -45,4 +45,7 @@ export class MemberService {
     }
 
 
+    setMainPhoto(photo: Photo){
+      return this.http.put(this.baseUrl + 'members/set-main-photo/' + photo.id,{});
+    }
 }
