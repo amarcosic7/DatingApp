@@ -4,10 +4,11 @@ import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validatio
 import { AccountService } from '../../../core/services/account-service';
 import { __runInitializers } from 'tslib';
 import { JsonPipe } from '@angular/common';
+import { TextInput } from "../../../shared/text-input/text-input";
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule,JsonPipe],
+  imports: [ReactiveFormsModule, JsonPipe, TextInput],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
@@ -24,7 +25,7 @@ export class Register implements OnInit{
 
   initializeForm(){
     this.registerForm = new FormGroup({
-      email: new FormControl('johndoe@test.com',[Validators.required,Validators.email]),
+      email: new FormControl('',[Validators.required,Validators.email]),
       displayName: new FormControl('',Validators.required),
       password: new FormControl('',[Validators.required,Validators.minLength(4),Validators.maxLength(8)]),
       confirmPassword : new FormControl('',[Validators.required,this.matchValues('password')])
