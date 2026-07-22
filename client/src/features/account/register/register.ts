@@ -51,6 +51,13 @@ export class Register{
     }
   }
 
+  getMaxDate(){
+    const today = new Date();
+    today.setFullYear(today.getFullYear() - 18);
+    return today.toISOString().split('T')[0];
+      
+  }
+
   nextStep(){
     if(this.credentialsForm.valid){
       this.currentStep.update(prevStep => prevStep + 1);
