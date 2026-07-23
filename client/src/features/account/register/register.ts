@@ -1,91 +1,94 @@
-import { Component, inject, OnInit, output, signal } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { RegisterCreds } from '../../../types/user';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { AccountService } from '../../../core/services/account-service';
 import { __runInitializers } from 'tslib';
-import { JsonPipe } from '@angular/common';
 import { TextInput } from "../../../shared/text-input/text-input";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, JsonPipe, TextInput],
+  imports: [ReactiveFormsModule,TextInput],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
-export class Register{
+export class Register {
 
   private accountService = inject(AccountService);
+  private router = inject(Router);
   private fb = inject(FormBuilder);
   cancelRegister = output<boolean>();
   protected creds = {} as RegisterCreds;
-  protected credentialsForm : FormGroup;
-  protected profileForm : FormGroup;
+  protected credentialsForm: FormGroup;
+  protected profileForm: FormGroup;
   protected currentStep = signal(1);
+  protected validationErrors = signal<string[]>([]);
 
-  constructor(){
-     this.credentialsForm = this.fb.group({
-      email: ['',[Validators.required,Validators.email]],
-      displayName:['',Validators.required],
-      password: ['',[Validators.required,Validators.minLength(4),Validators.maxLength(8)]],
-      confirmPassword :['',[Validators.required,this.matchValues('password')]]
+  constructor() {
+    this.credentialsForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      displayName: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(8)]],
+      confirmPassword: ['', [Validators.required, this.matchValues('password')]]
     });
-    this.credentialsForm.controls['password'].valueChanges.subscribe(()=>{ 
+    this.credentialsForm.controls['password'].valueChanges.subscribe(() => {
       this.credentialsForm.controls['confirmPassword'].updateValueAndValidity();
     })
 
     this.profileForm = this.fb.group({
-      gender: ['',Validators.required],
-      dateOfBirth: ['',Validators.required],
-      city: ['',Validators.required],
-      country: ['',Validators.required]
+      gender: ['male', Validators.required],
+      dateOfBirth: ['', Validators.required],
+      city: ['', Validators.required],
+      country: ['', Validators.required]
     })
   }
 
-  matchValues(matchTo:string): ValidatorFn{
-    return (control: AbstractControl): ValidationErrors | null =>{
+  matchValues(matchTo: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
       const parent = control.parent;
-      if(!parent) return null;
+      if (!parent) return null;
 
       const matchValue = parent.get(matchTo)?.value;
-      return control.value === matchValue ? null : {passwordMissmatch: true}
+      return control.value === matchValue ? null : { passwordMissmatch: true }
     }
   }
 
-  getMaxDate(){
+  getMaxDate() {
     const today = new Date();
     today.setFullYear(today.getFullYear() - 18);
     return today.toISOString().split('T')[0];
-      
+
   }
 
-  nextStep(){
-    if(this.credentialsForm.valid){
+  nextStep() {
+    if (this.credentialsForm.valid) {
       this.currentStep.update(prevStep => prevStep + 1);
     }
   }
 
-  prevStep(){
+  prevStep() {
     this.currentStep.update(prevStep => prevStep - 1);
   }
 
-  register(){
-   if(this.profileForm.valid && this.credentialsForm.valid){
-    const formData = {...this.credentialsForm.value, ...this.profileForm.value};
-    console.log('Form data:', formData);
-   }
+  register() {
+    if (this.profileForm.valid && this.credentialsForm.valid) {
+      const formData = { ...this.credentialsForm.value, ...this.profileForm.value };
+      this.accountService.register(formData).subscribe({
+        next: () => {
+          this.router.navigateByUrl('/members');
+        },
+        error: error => {
+          console.log(error);
+          this.validationErrors.set(error);
+        }
 
-    //this.accountService.register(this.creds).subscribe({
-     // next: response => {
-       // console.log(response);
-       // this.cancel();
-      //},
-      //error: error => console.log(error)
 
+      })
+    }
 
-    //})
   }
 
-  cancel(){
+  cancel() {
     this.cancelRegister.emit(false);
   }
 }
