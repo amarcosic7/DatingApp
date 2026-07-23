@@ -15,7 +15,12 @@ export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
   if (req.method === 'GET') {
     const cachedResponse = cache.get(req.url);
     if (cachedResponse) {
-      return of(cachedResponse);
+      return of(cachedResponse).pipe(
+        delay(500),
+        finalize(() => {
+          busyService.idle()
+        })
+      );
     }
   }
 
