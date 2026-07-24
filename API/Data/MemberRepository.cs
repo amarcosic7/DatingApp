@@ -23,6 +23,8 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
 
     public async Task<IReadOnlyList<Member>> GetMembersAsync()
     {
+        var query = context.Member.AsQueryable();
+
         return await context.Member.ToListAsync();
     }
     public async Task<IReadOnlyList<Photo>> GetPhotosForMemberAsync(string memberId)
