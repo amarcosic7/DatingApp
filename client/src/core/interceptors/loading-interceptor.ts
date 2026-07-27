@@ -12,17 +12,17 @@ export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
 
   busyService.busy();
 
-  if (req.method === 'GET') {
-    const cachedResponse = cache.get(req.url);
-    if (cachedResponse) {
-      return of(cachedResponse).pipe(
-        delay(500),
-        finalize(() => {
-          busyService.idle()
-        })
-      );
-    }
-  }
+  // if (req.method === 'GET') {
+  //   const cachedResponse = cache.get(req.url);
+  //   if (cachedResponse) {
+  //     return of(cachedResponse).pipe(
+  //       delay(500),
+  //       finalize(() => {
+  //         busyService.idle()
+  //       })
+  //     );
+  //   }
+  // }
 
 
 
