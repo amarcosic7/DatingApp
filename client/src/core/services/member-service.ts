@@ -19,14 +19,15 @@ export class MemberService {
 
 
 
-  getMembers(MemberParams: MemberParams) {
+  getMembers(memberParams: MemberParams) {
     let params = new HttpParams();
-    params = params.append('pageNumber', MemberParams.pageNumber);
-    params = params.append('pageSize', MemberParams.pageSize);
-    params = params.append('minAge', MemberParams.minAge);
-    params = params.append('maxAge', MemberParams.maxAge);
-    if(MemberParams.gender) 
-      params = params.append('gender',MemberParams.gender);
+    params = params.append('pageNumber', memberParams.pageNumber);
+    params = params.append('pageSize', memberParams.pageSize);
+    params = params.append('minAge', memberParams.minAge);
+    params = params.append('maxAge', memberParams.maxAge);
+    params = params.append('orderBy', memberParams.orderBy);
+    if(memberParams.gender) 
+      params = params.append('gender',memberParams.gender);
 
     return this.http.get<PaginatedResult<Member>>(this.baseUrl + 'members', { params });
   }
