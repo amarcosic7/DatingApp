@@ -21,8 +21,13 @@ export class MemberList implements OnInit{
   private updatedParams = new MemberParams();
 
 
-  constructor() {
-  }
+    constructor() {
+      const filters = localStorage.getItem('filters');
+      if(filters){
+        this.memberParams = JSON.parse(filters);
+        this.updatedParams = JSON.parse(filters);
+      }
+    }
   ngOnInit(): void {
    this.loadMembers();
   }
