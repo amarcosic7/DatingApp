@@ -33,7 +33,7 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
         throw new NotImplementedException();
     }
 
-    public async Task<bool> SaveAllChanges()
+    public async Task<bool> SaveAllAsync()
     {
         return await context.SaveChangesAsync() > 0;
     }
