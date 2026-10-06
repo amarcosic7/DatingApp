@@ -20,7 +20,7 @@ public class TokenService(IConfiguration congif) : ITokenService
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Email,user.Email),
+            new(ClaimTypes.Email,user.Email!),
             new(ClaimTypes.NameIdentifier,user.Id)  
         };
 

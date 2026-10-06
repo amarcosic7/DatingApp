@@ -23,17 +23,16 @@ public class AccountController(AppDbContext context, ITokenService tokenService)
 
         var user = new AppUser
         {
-            Email = registerDto.Email,
             DisplayName = registerDto.DisplayName,
-            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-            PasswordSalt = hmac.Key,
+            Email = registerDto.Email,
+            UserName = registerDto.Email,
             Member = new Member
             {
                 DisplayName = registerDto.DisplayName,
                 Gender = registerDto.Gender,
                 City = registerDto.City,
                 Country = registerDto.Country,
-                DateOfBirth = registerDto.DateOfBirth.Value
+                DateOfBirth = registerDto.DateOfBirth!.Value
             }
         };
 
@@ -49,23 +48,14 @@ public class AccountController(AppDbContext context, ITokenService tokenService)
         var user = await context.Users.SingleOrDefaultAsync(x=>x.Email == loginDto.Email);
 
         if(user == null) return Unauthorized("Invalid email address!");
-        
-        using var hmac = new HMACSHA512(user.PasswordSalt);
 
-        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
-
-        for (var i = 0; i < computedHash.Length; i++)
-        {
-            if(computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password!");
-        }
-        
         return user.ToDto(tokenService);
 
     }
 
     private async Task<bool> EmailExists(string email)
     {
-        return await context.Users.AnyAsync(x=> x.Email.ToLower() == email.ToLower());
+        return await context.Users.AnyAsync(x=> x.Email!.ToLower() == email.ToLower());
     }
 
 }
