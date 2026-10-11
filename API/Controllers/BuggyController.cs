@@ -1,4 +1,5 @@
 using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SQLitePCL;
 
@@ -11,19 +12,29 @@ public class BuggyController : BaseApiController
     {
         return Unauthorized();
     }
+   
     [HttpGet("not-found")]
     public IActionResult GetNotFound()
     {
         return NotFound();
     }
+    
     [HttpGet("server-error")]
     public IActionResult GetServerError()
     {
         throw new Exception("This is a server error!");
     }
+    
     [HttpGet("bad-request")]
     public IActionResult GGetBadRequest()
     {
         return BadRequest("This is a bad-request error!");
+    }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpGet("admin-secret")]
+    public ActionResult<string> GetSecretAdmin()
+    {
+        return Ok("Only admins should see this!");
     }
 }

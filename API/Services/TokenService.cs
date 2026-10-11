@@ -3,15 +3,17 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using API.Entities;
 using API.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services;
 
-public class TokenService(IConfiguration congif) : ITokenService
-{
-    public string CreateToken(AppUser user)
+public class TokenService(IConfiguration congif, UserManager<AppUser> userManager) : ITokenService
+{                                                                                   
+    public async Task<string> CreateToken(AppUser user)
     {
         var tokenKey = congif["TokenKey"] ?? throw new Exception("Cannnot get token key.");
         if(tokenKey.Length < 64)
@@ -23,6 +25,9 @@ public class TokenService(IConfiguration congif) : ITokenService
             new(ClaimTypes.Email,user.Email!),
             new(ClaimTypes.NameIdentifier,user.Id)  
         };
+
+        var roles = await userManager.GetRolesAsync(user);
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role,role)));
 
         var creds = new SigningCredentials(key,SecurityAlgorithms.HmacSha512Signature);
 
