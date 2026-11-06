@@ -11,11 +11,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services;
 
-public class TokenService(IConfiguration congif, UserManager<AppUser> userManager) : ITokenService
+public class TokenService(IConfiguration config, UserManager<AppUser> userManager) : ITokenService
 {                                                                                   
     public async Task<string> CreateToken(AppUser user)
     {
-        var tokenKey = congif["TokenKey"] ?? throw new Exception("Cannnot get token key.");
+        var tokenKey = config["TokenKey"] ?? throw new Exception("Cannot get token key.");
         if(tokenKey.Length < 64)
             throw new Exception("Your token key needs to be >= 64 characters");
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));

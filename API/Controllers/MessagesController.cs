@@ -32,7 +32,7 @@ public class MessagesController(IMessageRepository messageRepository,
         if(await messageRepository.SaveAllAsync())
             return message.ToDto();
         
-            return BadRequest("Falied to send message!");
+            return BadRequest("Failed to send message!");
     }
 
 
