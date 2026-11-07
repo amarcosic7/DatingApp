@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace API.DTOs;
 
 public class MessageDto
