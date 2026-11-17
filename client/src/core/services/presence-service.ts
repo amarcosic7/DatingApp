@@ -33,6 +33,10 @@ export class PresenceService {
     this.hubConnection.on('UserOffline', userId => {
       this.onlineUsers.update(users => users.filter(x=> x !== userId))
     });
+
+    this.hubConnection.on("GetOnlineUsers", userIds => {
+      this.onlineUsers.set(userIds)
+    })
   }
       stopHubConnection(){
         if(this.hubConnection?.state === HubConnectionState.Connected){
